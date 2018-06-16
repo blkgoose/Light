@@ -1,0 +1,61 @@
+{
+  "ftp://ftp.phptestareas.altervista.org@phptestareas": {
+    ".ftpquota": {
+      "type": "-",
+      "size": 8,
+      "lmtime": 0,
+      "modified": false
+    },
+    "index.html": {
+      "type": "-",
+      "size": 12891,
+      "lmtime": 0,
+      "modified": false
+    },
+    "Light": {
+      ".gitignore": {
+        "type": "-",
+        "size": 7,
+        "lmtime": 1529136664476,
+        "modified": false
+      },
+      ".htaccess": {
+        "type": "-",
+        "size": 117,
+        "lmtime": 1527510021842,
+        "modified": false
+      },
+      ".htaccess.txt": {
+        "type": "-",
+        "size": 138,
+        "lmtime": 0,
+        "modified": false
+      },
+      "DB.php": {
+        "type": "-",
+        "size": 0,
+        "lmtime": 1525624889859,
+        "modified": false
+      },
+      "JWT.php": {
+        "type": "-",
+        "size": 3664,
+        "lmtime": 1529135314079,
+        "modified": false
+      },
+      "Revolver.php": {
+        "type": "-",
+        "size": 3105,
+        "lmtime": 1528560303094,
+        "modified": false
+      },
+      "index.php": {
+        "type": "-",
+        "size": 2167,
+        "lmtime": 1529135334025,
+        "modified": false
+      }
+    }
+  },
+  "$version": 1
+}

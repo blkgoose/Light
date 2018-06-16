@@ -1,0 +1,16 @@
+{
+    "host": "ftp.phptestareas.altervista.org",
+    "username": "phptestareas",
+    "password": "varduminru39",
+    "remotePath": "Light",
+    "protocol": "ftp",
+    "port": 0,
+    "fileNameEncoding": "utf8",
+    "autoUpload": true,
+    "autoDelete": false,
+    "autoDownload": false,
+    "ignore": [
+        ".git",
+        "/.vscode"
+    ]
+}
