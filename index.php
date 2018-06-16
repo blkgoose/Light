@@ -49,7 +49,13 @@ Revolver::load(function ($R) use ($jwt, $pdo) {
             $R->send($t->execute());
         });
         $R->get('/?table/?select/?where', function ($res) use ($R, $pdo) {
-            $R->send(array_merge(["select" => "*", "where" => "1"], $res));
+            if (!$res[where]) {
+                $res[where] = "1";
+            }
+
+            if (!$res[select]) {
+                $res[select] = "*";
+            }
 
             $t = $pdo->query("SELECT $res[select] FROM $res[table] WHERE $res[where]");
             $R->send($t->fetchAll());
