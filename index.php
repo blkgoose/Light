@@ -12,6 +12,8 @@ $pdo = new PDO("mysql:host=$host; dbname=$db", "$user", "$pass");
 Revolver::load(function ($R) use ($jwt, $pdo) {
     $token = $jwt->check($_SERVER[Authorization]);
 
+    echo "TEST";
+
     $R->get('/register/?name/?password', function ($res) use ($R, $pdo) {
         $t = $pdo->prepare("INSERT INTO utenti (name, password) VALUES (:name, :password)");
         $t->execute([
