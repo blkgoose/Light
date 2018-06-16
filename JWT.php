@@ -91,9 +91,11 @@ class JWT
 
     private function __decode($token)
     {
+        $token = explode(".", $token);
+
         return [
             "header"    => json_decode($this->__base64urlDecode($token[0]), true),
-            "payload"   => json_decode($this->__sslDecrypt($this->__base64urlDecode($token[0])), true),
+            "payload"   => json_decode($this->__sslDecrypt($this->__base64urlDecode($token[1])), true),
             "signature" => $token[2],
         ];
     }
@@ -102,7 +104,7 @@ class JWT
     {
         $this->__dataIsGood($data);
         $defaults = [
-            "alg" => "SHA256",
+            "alg" => "HS256",
             "typ" => "JWT",
         ];
 

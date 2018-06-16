@@ -12,8 +12,6 @@ $pdo = new PDO("mysql:host=$host; dbname=$db", "$user", "$pass");
 Revolver::load(function ($R) use ($jwt, $pdo) {
     $token = $jwt->check($_SERVER[Authorization]);
 
-    echo "TEST";
-
     $R->get('/register/?name/?password', function ($res) use ($R, $pdo) {
         $t = $pdo->prepare("INSERT INTO utenti (name, password) VALUES (:name, :password)");
         $t->execute([
@@ -51,6 +49,8 @@ Revolver::load(function ($R) use ($jwt, $pdo) {
             $R->send($t->execute());
         });
         $R->get('/?table/?select/?where', function ($res) use ($R, $pdo) {
+            $R->send(array_merge(["select" => "*", "where" => "1"], $res));
+
             $t = $pdo->query("SELECT $res[select] FROM $res[table] WHERE $res[where]");
             $R->send($t->fetchAll());
         });

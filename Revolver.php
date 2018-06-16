@@ -19,9 +19,9 @@ class Revolver
 
         self::$METHOD = $_SERVER[REQUEST_METHOD];
 
-        self::$URI = $this->splitter(parse_url(urldecode($_SERVER[REQUEST_URI]), PHP_URL_PATH));
+        self::$URI = $this->__splitter(parse_url(urldecode($_SERVER[REQUEST_URI]), PHP_URL_PATH));
 
-        $path = $this->splitter($_SERVER[ORIG_PATH_INFO]);
+        $path = $this->__splitter($_SERVER[ORIG_PATH_INFO]);
 
         foreach ($path as $u) {
             if ($u == self::$URI[0]) {
@@ -46,33 +46,33 @@ class Revolver
             http_response_code(404);
         });
     }
-    private function splitter($string)
+    private function __splitter($string)
     {
         return explode('/', $string);
     }
-    private function parametize($uri)
+    private function __parametize($uri)
     {
         $pars = [];
 
         foreach ($uri as $k => $u) {
             if (preg_match('/^\?/', $u)) {
                 $pars[substr($u, 1)] = self::$URI[$k] == '' ? null : self::$URI[$k];
-            } else if ($u != self::$URI[$k]) {
+            } elseif ($u != self::$URI[$k]) {
                 return preg_match("/$u/", self::$URI[$k]);
             }
         }
 
         return count($pars) > 0 ? $pars : true;
     }
-    private function action($target, $bullet)
+    private function __action($target, $bullet)
     {
-        $P = $this->splitter($target);
+        $P = $this->__splitter($target);
 
         if (!$target) {
             exit($bullet(null));
         }
 
-        if (count($P) == count(self::$URI) && ($pars = $this->parametize($P))) {
+        if (count($P) == count(self::$URI) && ($pars = $this->__parametize($P))) {
             exit($bullet($pars));
         }
 
@@ -89,7 +89,7 @@ class Revolver
 
     public function any($target, $bullet)
     {
-        $this->action($target, $bullet);
+        $this->__action($target, $bullet);
     }
     public function post($target, $bullet)
     {
@@ -101,7 +101,7 @@ class Revolver
     public function get($target, $bullet)
     {
         if (self::$METHOD == 'GET') {
-            $this->action($target, $bullet);
+            $this->__action($target, $bullet);
         }
 
     }
