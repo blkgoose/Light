@@ -15,7 +15,8 @@ class Revolver
     private function __construct($main)
     {
         header('Content-Type: application/json');
-        header('Access-Control-Allow-Methods: GET,PUT,POST,PATCH,DELETE');
+        header("Access-Control-Allow-Origin: *");
+        header("Access-Control-Allow-Methods: GET,PUT,POST,PATCH,DELETE");
 
         self::$METHOD = $_SERVER[REQUEST_METHOD];
 
@@ -55,7 +56,7 @@ class Revolver
         $pars = [];
 
         foreach ($uri as $k => $u) {
-            if (preg_match('/^\?/', $u)) {
+            if (preg_match('/^\:/', $u)) {
                 $pars[substr($u, 1)] = self::$URI[$k] == '' ? null : self::$URI[$k];
             } elseif ($u != self::$URI[$k]) {
                 return preg_match("/$u/", self::$URI[$k]);

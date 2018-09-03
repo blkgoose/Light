@@ -12,7 +12,7 @@ $pdo = new PDO("mysql:host=$host; dbname=$db", "$user", "$pass");
 Revolver::load(function ($R) use ($jwt, $pdo) {
     $token = $jwt->check($_SERVER[Authorization]);
 
-    $R->get('/register/?name/?password', function ($res) use ($R, $pdo) {
+    $R->get('/register/:name/:password', function ($res) use ($R, $pdo) {
         $t = $pdo->prepare("INSERT INTO utenti (name, password) VALUES (:name, :password)");
         $t->execute([
             ':name'     => $res[name],
@@ -20,9 +20,9 @@ Revolver::load(function ($R) use ($jwt, $pdo) {
         ]);
     });
 
-    $R->get('/login/?name/?password', function ($res) use ($R, $jwt, $pdo) {
+    $R->get('/login/:name/:password', function ($res) use ($R, $jwt, $pdo) {
         if (isset($res[name], $res[password])) {
-            $t = $pdo->prepare("SELECT * FROM utenti WHERE name=? LIMIT 1");
+            $t = $pdo->prepare("SELECT * FROM Users WHERE name=? LIMIT 1");
 
             $t->execute([$res[name]]);
 
@@ -44,21 +44,15 @@ Revolver::load(function ($R) use ($jwt, $pdo) {
 
     //ADMIN ZONE
     if ($token[payload][role] == 1) {
-        $R->patch('/?table/?where/?update', function ($res) use ($R, $pdo) {
+        $R->get('/query', function ($res) use ($R, $pdo) {
+            $t = $pdo->query($_SERVER["QueryText"]);
+
+            $R->send($t->fetchAll());
+        });
+
+        $R->patch('/:table/:where/:update', function ($res) use ($R, $pdo) {
             $t = $pdo->query("UPDATE $res[table] SET $res[update] WHERE $res[where]");
             $R->send($t->execute());
-        });
-        $R->get('/?table/?select/?where', function ($res) use ($R, $pdo) {
-            if (!$res[where]) {
-                $res[where] = "1";
-            }
-
-            if (!$res[select]) {
-                $res[select] = "*";
-            }
-
-            $t = $pdo->query("SELECT $res[select] FROM $res[table] WHERE $res[where]");
-            $R->send($t->fetchAll());
         });
     }
 });
