@@ -12,15 +12,24 @@ $pdo = new PDO("mysql:host=$host; dbname=$db", "$user", "$pass");
 Revolver::load(function ($R) use ($jwt, $pdo) {
     $token = $jwt->check($_SERVER[Authorization]);
 
-    $R->get('/register/:name/:password', function ($res) use ($R, $pdo) {
-        $t = $pdo->prepare("INSERT INTO utenti (name, password) VALUES (:name, :password)");
-        $t->execute([
-            ':name'     => $res[name],
-            ':password' => password_hash($res[password], PASSWORD_BCRYPT),
-        ]);
+    $R->post('/register', function ($res) use ($R, $jwt, $pdo) {
+        $res = $_POST;
+        $R->send($_SERVER[body]);
+
+        // if (isset($res[name], $res[password], $res[email])) {
+        //     $t = $pdo->prepare("INSERT INTO `Users` (`name`, `password`, `email`, `role`) VALUES (?, ?, ?, -1)");
+
+        //     $R->send("prova");
+
+        //     // $t->execute([$res[name], password_hash($res[password]), $res[email]]);
+
+        //     // $result = $t->fetch();
+        //     // $R->send($result);
+        // }
     });
 
-    $R->get('/login/:name/:password', function ($res) use ($R, $jwt, $pdo) {
+    $R->post('/login', function ($res) use ($R, $jwt, $pdo) {
+        $res = $_POST;
         if (isset($res[name], $res[password])) {
             $t = $pdo->prepare("SELECT * FROM Users WHERE name=? LIMIT 1");
 
@@ -49,10 +58,15 @@ Revolver::load(function ($R) use ($jwt, $pdo) {
 
             $R->send($t->fetchAll());
         });
-
-        $R->patch('/:table/:where/:update', function ($res) use ($R, $pdo) {
-            $t = $pdo->query("UPDATE $res[table] SET $res[update] WHERE $res[where]");
-            $R->send($t->execute());
-        });
     }
 });
+
+/*
+$R->get('/register/:name/:password', function ($res) use ($R, $pdo) {
+$t = $pdo->prepare("INSERT INTO utenti (name, password) VALUES (:name, :password)");
+$t->execute([
+':name'     => $res[name],
+':password' => password_hash($res[password], PASSWORD_BCRYPT),
+]);
+});
+ */

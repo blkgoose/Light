@@ -95,7 +95,7 @@ class Revolver
     public function post($target, $bullet)
     {
         if (self::$METHOD == 'POST') {
-            $this->action($target, $bullet);
+            $this->__action($target, $bullet);
         }
 
     }
