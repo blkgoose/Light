@@ -15,8 +15,9 @@ class Revolver
     private function __construct($main)
     {
         header('Content-Type: application/json');
-        header("Access-Control-Allow-Origin: *");
-        header("Access-Control-Allow-Methods: GET,PUT,POST,PATCH,DELETE");
+        header('Accept: application/json');
+        header('Access-Control-Allow-Origin: *');
+        header('Access-Control-Allow-Methods: GET,PUT,POST,PATCH,DELETE');
 
         self::$METHOD = $_SERVER[REQUEST_METHOD];
 
@@ -32,12 +33,12 @@ class Revolver
         }
 
         if (self::$URI[0]) {
-            array_unshift(self::$URI, "");
+            array_unshift(self::$URI, '');
         }
 
         //HELLO WORLD
         $this->any('/hello', function ($res) {
-            $this->send("HELLO WORLD! <- " . self::$METHOD);
+            $this->send('HELLO WORLD! <- ' . self::$METHOD);
         });
 
         $main($this);
@@ -59,7 +60,7 @@ class Revolver
             if (preg_match('/^\:/', $u)) {
                 $pars[substr($u, 1)] = self::$URI[$k] == '' ? null : self::$URI[$k];
             } elseif ($u != self::$URI[$k]) {
-                return preg_match("/$u/", self::$URI[$k]);
+                return preg_match('/$u/', self::$URI[$k]);
             }
         }
 

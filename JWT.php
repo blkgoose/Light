@@ -114,7 +114,9 @@ class JWT
     public function payload($data = [])
     {
         $this->__dataIsGood($data);
-        $defaults = [];
+        $defaults = [
+            "exp" => $this->years(1),
+        ];
 
         self::$PAYLOAD = array_merge($defaults, $data);
         return $this;

@@ -13,23 +13,24 @@ Revolver::load(function ($R) use ($jwt, $pdo) {
     $token = $jwt->check($_SERVER[Authorization]);
 
     $R->post('/register', function ($res) use ($R, $jwt, $pdo) {
-        $res = $_POST;
-        $R->send($_SERVER[body]);
+        $res = json_decode($_POST[data], true);
 
-        // if (isset($res[name], $res[password], $res[email])) {
-        //     $t = $pdo->prepare("INSERT INTO `Users` (`name`, `password`, `email`, `role`) VALUES (?, ?, ?, -1)");
+        if (isset($res[name], $res[password], $res[email])) {
+            $t = $pdo->prepare("INSERT INTO `Users` (`name`, `password`, `email`, `role`) VALUES (:name, :password, :email, -1)");
 
-        //     $R->send("prova");
+            $result = $t->execute([
+                ':name'     => $res[name],
+                ':password' => password_hash($res[password], 1),
+                ':email'    => $res[email],
+            ]);
 
-        //     // $t->execute([$res[name], password_hash($res[password]), $res[email]]);
-
-        //     // $result = $t->fetch();
-        //     // $R->send($result);
-        // }
+            $R->send($result);
+        }
     });
 
     $R->post('/login', function ($res) use ($R, $jwt, $pdo) {
-        $res = $_POST;
+        $res = json_decode($_POST[data], true);
+
         if (isset($res[name], $res[password])) {
             $t = $pdo->prepare("SELECT * FROM Users WHERE name=? LIMIT 1");
 
@@ -59,14 +60,67 @@ Revolver::load(function ($R) use ($jwt, $pdo) {
             $R->send($t->fetchAll());
         });
     }
-});
 
-/*
-$R->get('/register/:name/:password', function ($res) use ($R, $pdo) {
-$t = $pdo->prepare("INSERT INTO utenti (name, password) VALUES (:name, :password)");
-$t->execute([
-':name'     => $res[name],
-':password' => password_hash($res[password], PASSWORD_BCRYPT),
-]);
+    /* JEEPH TEST */
+
+    $R->post('/gif/getChat', function ($res) use ($R, $jwt, $pdo) {
+        $token = $jwt->check($_POST[token]);
+        $other = $_POST[talkingTo];
+
+        $t = $pdo->prepare("SELECT messages as message,
+                            CASE WHEN from_user = :to THEN 'received' ELSE 'sent' END as type
+                            FROM (SELECT * FROM gif_chat ORDER BY timestamp) as ordered
+                            WHERE from_user = :from AND to_user = :to
+                            OR to_user = :from AND from_user = :to");
+
+        $result = $t->execute([
+            ':from' => $token[payload][name],
+            ':to'   => $other,
+        ]);
+
+        $R->send($t->fetchAll());
+    });
+
+    $R->post('/gif/send', function ($res) use ($R, $jwt, $pdo) {
+        $token   = $jwt->check($_POST[token]);
+        $other   = $_POST[talkingTo];
+        $message = $_POST[message];
+
+        $t = $pdo->prepare("INSERT INTO gif_chat (`from_user`, `to_user`, `messages`) VALUES (:from, :to, :message)");
+
+        $R->send(
+            $t->execute([
+                ':from'    => $token[payload][name],
+                ':to'      => $other,
+                ':message' => $message,
+            ]
+            )
+        );
+
+    });
+
+    $R->post('/gif/login', function ($res) use ($R, $jwt, $pdo) {
+        $res = json_decode($_POST[data], true);
+
+        if (isset($res[name], $res[password])) {
+            $t = $pdo->prepare("SELECT * FROM gif_users WHERE username=? LIMIT 1");
+
+            $t->execute([$res[name]]);
+
+            $user = $t->fetch();
+            if (password_verify($res[password], $user[password])) {
+                $R->send(
+                    $jwt->header()
+                        ->payload([
+                            "name" => $res[name],
+                            "exp"  => $jwt->years(1),
+                        ])
+                        ->cook(),
+                    true
+                );
+            }
+        }
+        http_response_code(401);
+    });
+
 });
- */
