@@ -17,7 +17,9 @@ class Revolver
         header('Content-Type: application/json');
         header('Accept: application/json');
         header('Access-Control-Allow-Origin: *');
-        header('Access-Control-Allow-Methods: GET,PUT,POST,PATCH,DELETE');
+        header('Access-Control-Allow-Methods: *');
+        header('Access-Control-Allow-Headers: *');
+        header('Access-Control-Allow-Credentials: true');
 
         self::$METHOD = $_SERVER[REQUEST_METHOD];
 
@@ -44,6 +46,9 @@ class Revolver
         $main($this);
 
         //NOT FOUND
+        $this->options('', function () {
+            http_response_code(200);
+        });
         $this->any('', function () {
             http_response_code(404);
         });
@@ -93,39 +98,40 @@ class Revolver
     {
         $this->__action($target, $bullet);
     }
+    public function options($target, $bullet)
+    {
+        if (self::$METHOD == 'OPTIONS') {
+            $this->__action($target, $bullet);
+        }
+    }
     public function post($target, $bullet)
     {
         if (self::$METHOD == 'POST') {
             $this->__action($target, $bullet);
         }
-
     }
     public function get($target, $bullet)
     {
         if (self::$METHOD == 'GET') {
             $this->__action($target, $bullet);
         }
-
     }
     public function put($target, $bullet)
     {
         if (self::$METHOD == 'PUT') {
             $this->action($target, $bullet);
         }
-
     }
     public function patch($target, $bullet)
     {
         if (self::$METHOD == 'PATCH') {
             $this->action($target, $bullet);
         }
-
     }
     public function delete($target, $bullet)
     {
         if (self::$METHOD == 'DELETE') {
             $this->action($target, $bullet);
         }
-
     }
 }
