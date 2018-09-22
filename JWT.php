@@ -59,7 +59,7 @@ class JWT
         }
     }
 
-    public function check($token)
+    public function check($token, $badTokenCallback)
     {
         try {
             $token     = $this->__decode($token);
@@ -78,6 +78,7 @@ class JWT
                 return $token;
             }
         } catch (Exception $_) {}
+        $badTokenCallback();
         return null;
     }
     private function __sslDecrypt($data, $algo = "AES256")
