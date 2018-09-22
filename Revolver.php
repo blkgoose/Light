@@ -75,7 +75,7 @@ class Revolver
     {
         $P = $this->__splitter($target);
 
-        $json_body = json_decode(file_get_contents("php://input"));
+        $json_body = json_decode(file_get_contents("php://input"), true);
 
         if (!$target) {
             exit($bullet(null,$json_body));
