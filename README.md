@@ -1,1 +1,2 @@
-# Light
+# Revolver
+PHP based REST library
