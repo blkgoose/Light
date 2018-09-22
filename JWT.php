@@ -79,7 +79,7 @@ class JWT
             }
         } catch (Exception $_) {}
         if ($token) {
-            $badTokenCallback();
+            $badTokenCallback($token);
         }
         return null;
     }
