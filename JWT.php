@@ -59,10 +59,10 @@ class JWT
         }
     }
 
-    public function check($token, $badTokenCallback)
+    public function check($rawToken, $badTokenCallback)
     {
         try {
-            $token     = $this->__decode($token);
+            $token     = $this->__decode($rawToken);
             $testToken = $this->__decode($this
                     ->header($token[header])
                     ->payload($token[payload])
@@ -78,7 +78,7 @@ class JWT
                 return $token;
             }
         } catch (Exception $_) {}
-        if ($token) {
+        if ($rawToken) {
             $badTokenCallback($token);
         }
         return null;
