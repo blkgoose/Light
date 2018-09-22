@@ -75,12 +75,14 @@ class Revolver
     {
         $P = $this->__splitter($target);
 
+        $json_body = json_decode(file_get_contents("php://input"));
+
         if (!$target) {
-            exit($bullet(null));
+            exit($bullet(null,$json_body));
         }
 
         if (count($P) == count(self::$URI) && ($pars = $this->__parametize($P))) {
-            exit($bullet($pars));
+            exit($bullet($pars,$json_body));
         }
 
     }
