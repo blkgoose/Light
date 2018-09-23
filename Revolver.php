@@ -43,6 +43,22 @@ class Revolver
             $this->send('HELLO WORLD! <- ' . self::$METHOD);
         });
 
+        $R->get('/prepared/:name', function ($res) use ($R, $jwt, $pdo) {
+            $r = $pdo
+                ->prepare("SELECT query
+                           FROM prepared_statements
+                           WHERE name=:name
+                           LIMIT 1");
+
+            $r->execute([":name" => $res[name]]);
+
+            if (!!($r = $r->fetch())) {
+                $R->send($pdo->query($r[query])->fetchAll(), true);
+            }
+
+            http_response_code(404);
+        });
+
         $main($this);
 
         //NOT FOUND
@@ -78,11 +94,11 @@ class Revolver
         $json_body = json_decode(file_get_contents("php://input"), true);
 
         if (!$target) {
-            exit($bullet(null,$json_body));
+            exit($bullet(null, $json_body));
         }
 
         if (count($P) == count(self::$URI) && ($pars = $this->__parametize($P))) {
-            exit($bullet($pars,$json_body));
+            exit($bullet($pars, $json_body));
         }
 
     }
