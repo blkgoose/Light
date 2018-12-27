@@ -92,6 +92,11 @@ class Revolver
     public function send($data, $final = false)
     {
         echo json_encode($data, true);
+        if (json_last_error() != 0) {
+            http_response_code(500);
+            throw new Exception(json_last_error_msg());
+            exit();
+        }
         if ($final) {
             exit();
         }
